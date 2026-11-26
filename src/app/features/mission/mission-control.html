@@ -1,0 +1,90 @@
+@if (store.mission(); as m) {
+  <header class="bar">
+    <a matButton class="bar__back" routerLink="/"><mat-icon>arrow_back</mat-icon>Menu</a>
+    <div class="bar__title">
+      <h1>{{ m.name }}</h1>
+      <span>{{ m.type }}, hazard {{ m.hazard }}</span>
+    </div>
+  </header>
+
+  <main class="grid">
+    <div class="status">
+      <!-- Mission clock -->
+      <section class="clock fm-page" aria-labelledby="clock-title">
+        <header class="fm-band">
+          <mat-icon>timer</mat-icon>
+          <h2 id="clock-title">Mission clock</h2>
+          @if (store.started() && !store.running()) {
+            <span class="clock__paused">Paused</span>
+          }
+        </header>
+        <div class="fm-body">
+          <p class="clock__digits fm-numeral" [class.clock__digits--idle]="!store.running()" role="timer">
+            {{ clock() }}
+          </p>
+          <div class="clock__actions">
+            <button matButton="filled" class="fm-btn-amber" (click)="store.toggleTimer()">
+              <mat-icon>{{ store.running() ? 'pause' : 'play_arrow' }}</mat-icon>
+              {{ timerLabel() }}
+            </button>
+            <button matButton="filled" class="fm-btn-ink" (click)="stop()">
+              <mat-icon>stop</mat-icon>
+              Stop
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Swarm overflow -->
+      <section class="swarm fm-page" [attr.data-danger]="danger()" aria-labelledby="swarm-title">
+        <div class="swarm__tape"></div>
+        <div class="fm-body">
+          <h2 class="swarm__title" id="swarm-title">Swarm overflows</h2>
+          <div class="swarm__count-row">
+            <button
+              matIconButton
+              aria-label="Remove one overflow"
+              [disabled]="store.overflows() === 0"
+              (click)="store.removeOverflow()"
+            >
+              <mat-icon>remove</mat-icon>
+            </button>
+            <span class="swarm__count fm-numeral">{{ store.overflows() }}</span>
+            <span class="swarm__value">
+              <span class="swarm__value-label">+1 swarm =</span>
+              <span class="fm-numeral swarm__value-num">+{{ store.multiplier() }}</span>
+            </span>
+          </div>
+          <button matButton="filled" class="swarm__btn" (click)="swarmMaxed()">
+            <mat-icon>warning</mat-icon>
+            Swarm meter maxed
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <section class="crew" aria-label="Miners">
+      @for (miner of store.miners(); track miner.cls) {
+        <app-miner-card [miner]="miner" />
+      }
+      <div class="crew__totals">
+        <span>Team</span>
+        <span><strong class="fm-numeral">{{ store.totals().kills }}</strong> kills</span>
+        <span><strong class="fm-numeral">{{ store.totals().deaths }}</strong> downed</span>
+        <span><strong class="fm-numeral">{{ store.totals().revives }}</strong> revives</span>
+        <span><strong class="fm-numeral">{{ store.totals().minerals }}</strong> minerals</span>
+      </div>
+    </section>
+  </main>
+
+  <app-rules-drawer />
+} @else {
+  <div class="none fm-page">
+    <div class="fm-stripes"></div>
+    <div class="fm-body">
+      <h1>No mission in progress</h1>
+      <p>Start one from the menu to get the clock, swarm counter and crew stats.</p>
+      <a matButton="filled" class="fm-btn-amber" routerLink="/">Go to the menu</a>
+    </div>
+  </div>
+}

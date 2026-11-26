@@ -1,0 +1,247 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+  padding: calc(24px + var(--safe-top)) 24px calc(24px + var(--safe-bottom));
+  box-sizing: border-box;
+}
+
+.menu {
+  display: grid;
+  grid-template-columns: minmax(340px, 5fr) 7fr;
+  gap: 24px;
+  max-width: 1300px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+// ---- Cover --------------------------------------------------------------
+
+.cover {
+  overflow: hidden;
+  position: sticky;
+  top: 24px;
+
+  &__body {
+    padding: 28px 28px 32px;
+  }
+
+  &__kicker {
+    margin: 0 0 8px;
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+  }
+
+  &__title {
+    margin: 0 0 28px;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(3.2rem, 7vw, 5rem);
+    line-height: 0.92;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    // Printed, slightly worn ink
+    text-shadow: 1px 1px 0 rgb(36 33 28 / 15%);
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    > * {
+      flex: 1 1 200px;
+    }
+  }
+
+  &__rules {
+    --mat-button-outlined-container-height: 56px;
+    font-size: 1.05rem;
+  }
+}
+
+.briefing {
+  margin-bottom: 24px;
+  padding: 16px 18px;
+  background: var(--paper-shade);
+  border-left: 6px solid var(--amber);
+
+  p {
+    margin: 0;
+  }
+
+  &__label {
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+
+  &__name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  &__meta {
+    color: var(--ink-soft);
+  }
+
+  &__time {
+    margin: 10px 0 14px !important;
+    font-size: 2.6rem;
+
+    &--paused {
+      opacity: 0.55;
+    }
+  }
+
+  &__go {
+    width: 100%;
+  }
+}
+
+// ---- Log ----------------------------------------------------------------
+
+.log {
+  min-height: 300px;
+
+  &__count {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    padding: 0 8px;
+    border-radius: 2px;
+    background: var(--ink);
+    color: var(--amber);
+  }
+
+  &__spacer {
+    flex: 1;
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 8px 16px 16px;
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 48px 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 1.1rem;
+
+    .mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+    }
+
+    p {
+      max-width: 36ch;
+      margin: 0;
+    }
+  }
+}
+
+.entry {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 4px;
+  border-bottom: 1px dashed var(--rule);
+  color: inherit;
+  text-decoration: none;
+
+  &:active {
+    background: var(--paper-shade);
+  }
+
+  &__date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+  }
+
+  &__day {
+    font-size: 2rem;
+    color: var(--ink);
+  }
+
+  &__main {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__meta {
+    color: var(--ink-soft);
+  }
+
+  &__crew {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    margin-top: 2px;
+  }
+
+  &__dwarf {
+    font-weight: 600;
+    padding-left: 6px;
+    border-left: 4px solid var(--class-color);
+  }
+
+  &__right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+
+  &__kda {
+    font-weight: 600;
+    color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+// iPad portrait and smaller: stack
+@media (max-width: 900px) {
+  .menu {
+    grid-template-columns: 1fr;
+  }
+
+  .cover {
+    position: static;
+  }
+}
+
+@media (max-width: 520px) {
+  :host {
+    padding: calc(12px + var(--safe-top)) 12px calc(12px + var(--safe-bottom));
+  }
+
+  .entry {
+    grid-template-columns: 48px 1fr;
+
+    &__right {
+      grid-column: 2;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+}

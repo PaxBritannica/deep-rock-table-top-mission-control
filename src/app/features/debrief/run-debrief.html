@@ -1,0 +1,82 @@
+<header class="bar">
+  <a matButton class="bar__back" routerLink="/"><mat-icon>arrow_back</mat-icon>Menu</a>
+</header>
+
+@if (view(); as v) {
+  <article class="report fm-page">
+    <div class="fm-stripes"></div>
+    <div class="report__body">
+      <header class="report__head">
+        <div>
+          <p class="report__kicker">Mission debrief</p>
+          <h1 class="report__name">{{ v.run.name }}</h1>
+        </div>
+        <span class="fm-stamp report__stamp" [attr.data-outcome]="v.run.outcome">{{ labels[v.run.outcome] }}</span>
+      </header>
+
+      <dl class="facts">
+        <div><dt>Type</dt><dd>{{ v.run.type }}</dd></div>
+        <div><dt>Hazard</dt><dd class="fm-numeral">{{ v.run.hazard }}</dd></div>
+        <div><dt>Time</dt><dd class="fm-numeral">{{ v.time }}</dd></div>
+        <div><dt>Swarm overflows</dt><dd><span class="fm-numeral">{{ v.run.overflows }}</span> (ended at +{{ v.multiplier }})</dd></div>
+        <div><dt>Played</dt><dd>{{ v.run.endedAt | date: 'EEE d MMM y, HH:mm' }}</dd></div>
+      </dl>
+
+      <div class="table-wrap">
+        <table class="crew">
+          <thead>
+            <tr>
+              <th scope="col">Dwarf</th>
+              <th scope="col" class="num">Kills</th>
+              <th scope="col" class="num">Downed</th>
+              <th scope="col" class="num">Revives</th>
+              <th scope="col" class="num">Minerals</th>
+              <th scope="col" class="num">KDA</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of v.rows; track r.cls) {
+              <tr [attr.data-class]="r.cls">
+                <th scope="row" class="who">
+                  <span class="who__class">{{ r.cls }}</span>
+                  <span class="who__player">{{ r.player || '–' }}</span>
+                  @if (r.mvp) {
+                    <span class="mvp"><mat-icon>military_tech</mat-icon>MVP</span>
+                  }
+                </th>
+                <td class="num fm-numeral">{{ r.stats.kills }}</td>
+                <td class="num fm-numeral">{{ r.stats.deaths }}</td>
+                <td class="num fm-numeral">{{ r.stats.revives }}</td>
+                <td class="num fm-numeral">{{ r.stats.minerals }}</td>
+                <td class="num fm-numeral kda">{{ r.kda }}</td>
+              </tr>
+            }
+          </tbody>
+          <tfoot>
+            <tr>
+              <th scope="row">Team</th>
+              <td class="num fm-numeral">{{ v.totals.kills }}</td>
+              <td class="num fm-numeral">{{ v.totals.deaths }}</td>
+              <td class="num fm-numeral">{{ v.totals.revives }}</td>
+              <td class="num fm-numeral">{{ v.totals.minerals }}</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="report__actions">
+        <a matButton="filled" class="fm-btn-amber" routerLink="/">Back to the menu</a>
+        <button matButton class="delete" (click)="remove()"><mat-icon>delete</mat-icon>Delete from log</button>
+      </div>
+    </div>
+  </article>
+} @else {
+  <div class="report fm-page missing">
+    <div class="fm-body">
+      <h1>Mission not found</h1>
+      <p>It may have been deleted, or this save lives on another device.</p>
+      <a matButton="filled" class="fm-btn-amber" routerLink="/">Back to the menu</a>
+    </div>
+  </div>
+}

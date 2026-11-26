@@ -1,0 +1,29 @@
+<div class="scrim" (click)="open.set(false)" aria-hidden="true"></div>
+
+<aside class="drawer" aria-label="Rules reference">
+  <nav class="tabs" aria-label="Rule sections">
+    @for (s of sections; track s.id) {
+      <button
+        type="button"
+        class="tab"
+        [class.tab--active]="open() && active() === s.id"
+        [attr.aria-expanded]="open() && active() === s.id"
+        (click)="openAt(s.id)"
+      >
+        {{ s.tab }}
+      </button>
+    }
+  </nav>
+
+  <div class="sheet" [attr.inert]="open() ? null : ''">
+    <header class="fm-band">
+      <mat-icon>menu_book</mat-icon>
+      <h2>Rules</h2>
+      <span class="spacer"></span>
+      <button matIconButton aria-label="Close rules" (click)="open.set(false)">
+        <mat-icon>close</mat-icon>
+      </button>
+    </header>
+    <app-rules-content class="sheet__content" />
+  </div>
+</aside>

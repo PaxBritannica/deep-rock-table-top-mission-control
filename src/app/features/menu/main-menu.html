@@ -1,0 +1,91 @@
+<div class="menu">
+  <section class="cover fm-page" aria-labelledby="app-title">
+    <div class="fm-stripes"></div>
+    <div class="cover__body">
+      <p class="cover__kicker">Field manual for Deep Rock Galactic board game nights</p>
+      <h1 class="cover__title" id="app-title">Mission Control</h1>
+
+      @if (active.mission(); as m) {
+        <div class="briefing">
+          <p class="briefing__label">Mission in progress</p>
+          <p class="briefing__name">{{ m.name }}</p>
+          <p class="briefing__meta">{{ m.type }}, hazard {{ m.hazard }}</p>
+          <p class="briefing__time fm-numeral" [class.briefing__time--paused]="!active.running()">
+            {{ activeTime() }}
+          </p>
+          <a matButton="filled" class="fm-btn-amber briefing__go" routerLink="/mission">
+            <mat-icon>play_arrow</mat-icon>
+            Continue mission
+          </a>
+        </div>
+      }
+
+      <div class="cover__actions">
+        <button
+          matButton="filled"
+          [class.fm-btn-amber]="!active.mission()"
+          [class.fm-btn-ink]="!!active.mission()"
+          (click)="newMission()"
+        >
+          <mat-icon>add</mat-icon>
+          New mission
+        </button>
+        <a matButton="outlined" class="cover__rules" routerLink="/rules">
+          <mat-icon>menu_book</mat-icon>
+          Rules reference
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="log fm-page" aria-labelledby="log-title">
+    <header class="fm-band">
+      <mat-icon>history_edu</mat-icon>
+      <h2 id="log-title">Mission log</h2>
+      <span class="log__count">{{ rows().length }}</span>
+      <span class="log__spacer"></span>
+      <button matIconButton matTooltip="Export saves" aria-label="Export saves" (click)="exportSaves()">
+        <mat-icon>download</mat-icon>
+      </button>
+      <button matIconButton matTooltip="Import saves" aria-label="Import saves" (click)="fileInput.click()">
+        <mat-icon>upload</mat-icon>
+      </button>
+      <input #fileInput type="file" accept="application/json,.json" hidden (change)="importSaves(fileInput)" />
+    </header>
+
+    @if (rows().length) {
+      <ol class="log__list">
+        @for (row of rows(); track row.run.id) {
+          <li>
+            <a class="entry" [routerLink]="['/runs', row.run.id]">
+              <span class="entry__date">
+                <span class="fm-numeral entry__day">{{ row.run.endedAt | date: 'dd' }}</span>
+                <span>{{ row.run.endedAt | date: 'MMM yy' }}</span>
+              </span>
+              <span class="entry__main">
+                <span class="entry__name">{{ row.run.name }}</span>
+                <span class="entry__meta">{{ row.run.type }}, hazard {{ row.run.hazard }}, {{ row.time }}</span>
+                <span class="entry__crew">
+                  @for (m of row.run.miners; track m.cls) {
+                    <span class="entry__dwarf" [attr.data-class]="m.cls">{{ m.player || m.cls }}</span>
+                  }
+                </span>
+              </span>
+              <span class="entry__right">
+                <span class="fm-stamp" [attr.data-outcome]="row.run.outcome">{{ outcomeLabels[row.run.outcome] }}</span>
+                <span class="entry__kda" aria-label="Team kills, downed, revives">
+                  {{ row.totals.kills }} / {{ row.totals.deaths }} / {{ row.totals.revives }}
+                </span>
+              </span>
+            </a>
+          </li>
+        }
+      </ol>
+    } @else {
+      <div class="log__empty">
+        <mat-icon>landscape</mat-icon>
+        <p>No missions logged yet. Finish a mission and it lands here with everyone's stats.</p>
+      </div>
+    }
+  </section>
+</div>

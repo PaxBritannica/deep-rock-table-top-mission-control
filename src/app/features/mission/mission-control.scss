@@ -1,0 +1,226 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+  // leave room on the right for the rules thumb-index tabs
+  padding: calc(8px + var(--safe-top)) 62px calc(20px + var(--safe-bottom)) 20px;
+  box-sizing: border-box;
+}
+
+// ---- Top bar ------------------------------------------------------------
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  margin-bottom: 12px;
+  color: var(--on-rock);
+
+  &__back {
+    --mat-button-text-label-text-color: var(--amber);
+    flex: none;
+  }
+
+  &__title {
+    min-width: 0;
+
+    h1 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: 1.8rem;
+      line-height: 1.1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    span {
+      color: var(--on-rock-soft);
+    }
+  }
+}
+
+// ---- Layout -------------------------------------------------------------
+// Landscape iPad: status column on the left, crew 2x2 on the right.
+// Portrait iPad: status side by side on top, crew 2x2 below.
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 340px) 1fr;
+  gap: var(--gap);
+  align-items: start;
+}
+
+.status {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.crew {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--gap);
+
+  &__totals {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    padding: 10px 14px;
+    color: var(--on-rock-soft);
+    border: 1px dashed rgb(231 220 193 / 25%);
+    border-radius: var(--radius-page);
+
+    > span:first-child {
+      color: var(--amber);
+      font-weight: 700;
+    }
+
+    strong {
+      color: var(--on-rock);
+      font-weight: 400;
+      font-size: 1.3rem;
+    }
+  }
+}
+
+@media (max-width: 1000px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .status {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  :host {
+    padding-left: 10px;
+    padding-right: 54px;
+  }
+
+  .status {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ---- Clock --------------------------------------------------------------
+
+.clock {
+  &__paused {
+    margin-left: auto;
+    padding: 2px 8px;
+    background: var(--ink);
+    color: var(--amber);
+    font-weight: 700;
+    border-radius: 2px;
+  }
+
+  &__digits {
+    margin: 4px 0 16px;
+    text-align: center;
+    font-size: clamp(2.8rem, 5.6vw, 4rem);
+    transition: opacity 0.2s;
+
+    &--idle {
+      opacity: 0.45;
+    }
+  }
+
+  &__actions {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 10px;
+  }
+}
+
+// ---- Swarm --------------------------------------------------------------
+// The memorable bit: warning tape gets wider and redder with each overflow.
+
+.swarm {
+  --tape-a: var(--ink);
+  --tape-b: var(--amber);
+  --tape-h: 14px;
+  --accent: var(--amber-deep);
+  overflow: hidden;
+
+  &[data-danger='1'] { --tape-h: 22px; --accent: #b3500c; }
+  &[data-danger='2'] { --tape-h: 30px; --tape-b: #e8691b; --accent: #a8381a; }
+  &[data-danger='3'] { --tape-h: 38px; --tape-b: #d9421f; --accent: var(--hazard); }
+  &[data-danger='4'] { --tape-h: 46px; --tape-b: var(--hazard); --accent: var(--hazard); }
+
+  &__tape {
+    height: var(--tape-h);
+    background: repeating-linear-gradient(-45deg, var(--tape-a) 0 14px, var(--tape-b) 14px 28px);
+    transition: height 0.3s;
+  }
+
+  &__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 1.35rem;
+  }
+
+  &__count-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0 12px;
+  }
+
+  &__count {
+    font-size: 4.2rem;
+    color: var(--accent);
+    min-width: 1.2em;
+    text-align: center;
+  }
+
+  &__value {
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  &__value-label {
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+
+  &__value-num {
+    font-size: 2.2rem;
+    color: var(--accent);
+  }
+
+  &__btn.mat-mdc-button-base {
+    width: 100%;
+    --mat-button-filled-container-color: var(--accent);
+    --mat-button-filled-label-text-color: #fff8ee;
+    --mat-button-filled-container-height: 56px;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+}
+
+// ---- Empty state --------------------------------------------------------
+
+.none {
+  max-width: 520px;
+  margin: 15vh auto 0;
+  overflow: hidden;
+
+  h1 {
+    margin: 0 0 8px;
+    font-family: var(--font-display);
+    font-weight: 400;
+  }
+
+  p {
+    margin: 0 0 16px;
+  }
+}

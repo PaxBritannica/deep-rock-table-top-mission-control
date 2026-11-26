@@ -1,0 +1,83 @@
+// Fonts and icons are self-hosted from npm (see "styles" in angular.json), so the app works offline.
+@use '@angular/material' as mat;
+@use 'styles/tokens';
+@use 'styles/field-manual';
+
+html {
+  height: 100%;
+  color-scheme: light;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$orange-palette,
+        theme-type: light,
+      ),
+      typography: (
+        plain-family: 'Barlow Semi Condensed',
+        brand-family: 'Barlow Semi Condensed',
+        bold-weight: 700,
+        medium-weight: 600,
+        regular-weight: 500,
+      ),
+      density: 0,
+    )
+  );
+
+  // Map Material's surfaces onto the guidebook paper and ink.
+  @include mat.theme-overrides(
+    (
+      primary: #9c4f00,
+      on-primary: #fff8ee,
+      surface: #e7dcc1,
+      on-surface: #24211c,
+      on-surface-variant: #5f5544,
+      surface-container-lowest: #efe6cf,
+      surface-container-low: #e2d6b8,
+      surface-container: #ddd0b0,
+      surface-container-high: #d6c8a5,
+      surface-container-highest: #cfbf99,
+      outline: #8a7d63,
+      outline-variant: #b9a983,
+      inverse-surface: #2b2723,
+      inverse-on-surface: #e7dcc1,
+      inverse-primary: #f2a71b,
+      secondary-container: #f2c46a,
+      on-secondary-container: #24211c,
+    )
+  );
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  background-color: var(--rock);
+  background-image:
+    radial-gradient(ellipse at 20% 0%, rgb(255 255 255 / 4%), transparent 60%),
+    radial-gradient(ellipse at 100% 100%, rgb(242 167 27 / 6%), transparent 55%);
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-weight: 500;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+a,
+[role='button'] {
+  touch-action: manipulation; // no double-tap zoom delay on iPad
+}
+
+:focus-visible {
+  outline: 3px solid var(--amber);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

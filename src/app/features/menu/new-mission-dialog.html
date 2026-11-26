@@ -1,0 +1,52 @@
+<h2 mat-dialog-title>New mission</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" id="new-mission-form">
+  <mat-dialog-content class="form">
+    <mat-form-field appearance="outline" class="form__name">
+      <mat-label>Mission name</mat-label>
+      <input matInput formControlName="name" maxlength="60" placeholder="e.g. Glacial strata, mission 3" />
+      @if (form.controls.name.hasError('required')) {
+        <mat-error>Give the mission a name so you can find it in the log.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Mission type</mat-label>
+      <mat-select formControlName="type">
+        @for (t of types; track t) {
+          <mat-option [value]="t">{{ t }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <div class="form__hazard">
+      <span class="form__label" id="hazard-label">Hazard level</span>
+      <mat-button-toggle-group formControlName="hazard" aria-labelledby="hazard-label" hideSingleSelectionIndicator>
+        @for (h of hazards; track h) {
+          <mat-button-toggle [value]="h">{{ h }}</mat-button-toggle>
+        }
+      </mat-button-toggle-group>
+    </div>
+
+    <fieldset class="form__crew" formArrayName="miners">
+      <legend class="form__label">Who's playing</legend>
+      @for (g of form.controls.miners.controls; track g.controls.cls.value; let i = $index) {
+        <div class="crew-row" [formGroupName]="i" [attr.data-class]="g.controls.cls.value">
+          <mat-checkbox formControlName="playing">{{ g.controls.cls.value }}</mat-checkbox>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Player</mat-label>
+            <input matInput formControlName="player" maxlength="24" />
+          </mat-form-field>
+        </div>
+      }
+      @if (form.controls.miners.hasError('noMiners')) {
+        <p class="form__error">Pick at least one dwarf.</p>
+      }
+    </fieldset>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button matButton type="button" mat-dialog-close>Cancel</button>
+    <button matButton="filled" type="submit">Begin mission</button>
+  </mat-dialog-actions>
+</form>

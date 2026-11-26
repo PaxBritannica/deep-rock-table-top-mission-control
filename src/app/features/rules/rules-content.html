@@ -1,0 +1,50 @@
+<label class="search">
+  <mat-icon>search</mat-icon>
+  <span class="visually-hidden">Search the rules</span>
+  <input type="search" placeholder="Search the rules" [value]="query()" (input)="onSearch($event)" />
+</label>
+
+@for (section of sections(); track section.id) {
+  <section class="section" [id]="'rule-' + section.id">
+    <h3 class="section__title">
+      <mat-icon>{{ section.icon }}</mat-icon>
+      {{ section.title }}
+    </h3>
+
+    @for (entry of section.entries; track entry.title) {
+      <div class="entry">
+        <h4>{{ entry.title }}</h4>
+        @for (line of entry.lines; track $index) {
+          <p>{{ line }}</p>
+        }
+      </div>
+    }
+
+    @if (section.table; as t) {
+      <table class="stats">
+        <thead>
+          <tr>
+            @for (c of t.columns; track c) {
+              <th scope="col">{{ c }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of t.rows; track $index) {
+            <tr>
+              @for (cell of row; track $index; let first = $first) {
+                @if (first) {
+                  <th scope="row">{{ cell }}</th>
+                } @else {
+                  <td>{{ cell }}</td>
+                }
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </section>
+} @empty {
+  <p class="empty">Nothing matches "{{ query() }}". Try a shorter word, like "revive" or "nitra".</p>
+}

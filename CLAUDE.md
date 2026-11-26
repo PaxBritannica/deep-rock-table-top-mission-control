@@ -1,0 +1,48 @@
+# CLAUDE.md
+
+Guidance for Claude Code working in this repo. Read README.md for features and structure.
+
+## Stack
+
+- Angular 22, standalone components, **signals** for all state, zoneless change detection.
+- Angular Material 3 (themed in `src/styles.scss`), Material Symbols icons via the `material-symbols` npm package.
+- Typed reactive forms for any form.
+- Vitest for unit tests (`npm test`).
+- PWA via `@angular/service-worker`; hash routing (`#/mission`) so it runs on any static host and offline.
+
+## Commands
+
+```bash
+npm start        # dev server
+npm test -- --watch=false
+npm run build    # must pass with no errors before you finish
+```
+
+## Conventions
+
+- **State** lives in signal stores under `src/app/core/**/*.store.ts` (`ActiveMissionStore`, `RunsStore`). Components read signals and call store methods; they don't write to storage or mutate state directly.
+- **Pure logic** (maths, formatting, scoring) goes in plain functions like `core/mission/mission-math.ts`, with a `.spec.ts` next to it.
+- **Persistence** goes only through `core/storage/local-store.ts`. Keys are versioned (`drg.v2.*`). If you change a persisted shape, migrate it where it's loaded or bump the key.
+- **Types** go in `core/models/mission.models.ts`.
+- File naming follows the Angular 20+ style: `main-menu.ts`, `main-menu.html`, `main-menu.scss` (no `.component` suffix); class names without `Component`.
+- Use built-in control flow (`@if`, `@for`) and `input()` / `viewChild()` signal APIs.
+
+## Styling
+
+- The look is a printed **field manual**. Reuse the global classes in `src/styles/_field-manual.scss` (`.fm-page`, `.fm-band`, `.fm-stripes`, `.fm-stamp`, `.fm-numeral`, `.fm-btn-amber`, `.fm-btn-ink`) before writing new styles.
+- Colours, fonts and radii come from tokens in `src/styles/_tokens.scss`. Don't hard-code new colours in components; add a token.
+- Class colours: set `data-class="Scout|Driller|Engineer|Gunner"` on an element and use `var(--class-color)`.
+- It's an iPad app: touch targets at least 44px (primary buttons 56px), check both **portrait 820×1180** and **landscape 1180×820**, respect safe areas (`--safe-top`, `--safe-bottom`).
+
+## Offline rules
+
+- No requests to CDNs or external APIs. Fonts, icons and data ship in the bundle.
+- New static assets must be covered by `ngsw-config.json` (everything is prefetched).
+
+## Rules content
+
+`core/rules/rules.data.ts` holds the rules reference. Write short paraphrases in your own words; never paste rulebook text.
+
+## How to report changes
+
+When you explain or propose code changes, always give the full file path **and** the exact position in the file: the containing method or function, whether to insert before or after a specific line or block, or exactly which lines to replace or delete.

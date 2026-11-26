@@ -1,0 +1,102 @@
+:host {
+  --sheet-width: min(440px, 86vw);
+  --tab-width: 46px;
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  background: rgb(0 0 0 / 35%);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+:host(.open) .scrim {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: var(--sheet-width);
+  transform: translateX(var(--sheet-width));
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+:host(.open) .drawer {
+  transform: translateX(0);
+}
+
+// Thumb index: sticks out of the left edge of the sheet,
+// so it sits on the screen edge when the sheet is closed.
+.tabs {
+  position: absolute;
+  top: calc(84px + var(--safe-top));
+  left: calc(var(--tab-width) * -1);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  pointer-events: auto;
+}
+
+.tab {
+  width: var(--tab-width);
+  height: 64px;
+  padding: 0;
+  border: none;
+  border-radius: 6px 0 0 6px;
+  background: var(--paper-shade);
+  color: var(--ink);
+  font: 700 0.85rem var(--font-body);
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  box-shadow: 0 2px 0 rgb(0 0 0 / 35%);
+  cursor: pointer;
+
+  &:nth-child(odd) {
+    background: var(--amber);
+  }
+
+  &--active {
+    background: var(--paper) !important;
+    box-shadow: none;
+  }
+}
+
+.sheet {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  box-shadow: -8px 0 24px rgb(0 0 0 / 35%);
+  pointer-events: auto;
+  padding-top: var(--safe-top);
+  border-radius: 0;
+
+  .fm-band {
+    border-radius: 0;
+  }
+
+  .spacer {
+    flex: 1;
+  }
+
+  &__content {
+    flex: 1;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 0 16px calc(24px + var(--safe-bottom));
+  }
+}
+
+:host(:not(.open)) .sheet {
+  visibility: hidden;
+  transition: visibility 0s 0.28s;
+}
