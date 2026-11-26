@@ -113,6 +113,13 @@ ngsw-config.json                  service worker: everything prefetched for offl
 - The clock is stored as timestamps (`accumulatedMs` + `runningSince`), not as a ticking counter, so it stays correct through reloads, sleep and screen lock.
 - If you change the shape of anything persisted, either migrate it where it's read or bump the key version.
 
+### Icons
+
+The app has its own original icon set (no game art): round **tokens** for status effects, rounded-square **dice faces** for die results, and plain line **glyphs** for actions. They are generated as SVG by `tools/gen-icons.py` into `src/app/core/ui/fm-icons.data.ts`, registered with Angular Material under the `fm` namespace, and coloured with the `--tone-*` / `--die-*` tokens in `src/styles/_tokens.scss`.
+
+- Use one: `<mat-icon svgIcon="fm:frozen" />`, or `icon: 'fm:frozen'` on a rules entry (`rowIcons` / `columnIcons` on rules tables).
+- Add or change one: edit `GLYPHS` in `tools/gen-icons.py`, run `npm run icons` (or `python3 tools/gen-icons.py . preview.html` for a preview page), then `npm test` (it checks every `fm:` icon the rules use exists).
+
 ### Look and feel
 
 The UI is styled like a printed field manual: paper pages on a dark rock backdrop, amber section bands, warning tape, stencil numerals (Saira Stencil One) and condensed body text (Barlow Semi Condensed). Every colour, font and radius is a token in `src/styles/_tokens.scss`; change it there and the whole app follows. Fonts and icons are installed from npm, never loaded from a CDN, so nothing breaks offline.

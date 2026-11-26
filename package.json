@@ -7,7 +7,8 @@
     "build": "ng build",
     "preview": "ng build && npx --yes http-server dist/drg-mission-control/browser -p 8080 -c-1",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "icons": "python3 tools/gen-icons.py ."
   },
   "private": true,
   "packageManager": "npm@10.9.9",

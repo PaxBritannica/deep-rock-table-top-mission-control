@@ -10,7 +10,7 @@ export interface RuleEntry {
   title: string;
   /** One-line gist, shown in bold on cards. */
   summary?: string;
-  /** Material Symbols icon name (cards layout). */
+  /** "fm:<name>" for the app's own icons, otherwise a Material Symbols name. */
   icon?: string;
   /** Short lines; each renders as its own paragraph. */
   lines: string[];
@@ -24,6 +24,10 @@ export interface RuleTable {
   rows: (string | number)[][];
   /** Text table (left-aligned, wrapping) instead of a numeric stat table. */
   text?: boolean;
+  /** Icon per column header ("fm:..."), null for none. */
+  columnIcons?: (string | null)[];
+  /** Icon shown before each row's first cell ("fm:..."), null for none. */
+  rowIcons?: (string | null)[];
 }
 
 export interface RuleSection {
@@ -52,6 +56,7 @@ export const RULE_SECTIONS: RuleSection[] = [
         caption: 'Knocked over or unconscious?',
         text: true,
         columns: ['', 'Knocked over', 'Unconscious (0 health)'],
+        columnIcons: [null, 'fm:knocked-over', 'fm:unconscious'],
         rows: [
           ['Actions', 'None until you are standing', 'None'],
           ['Getting up', '2 actions on your own, or 1 action from an adjacent Dwarf', 'An adjacent Dwarf revives you for 1 action: stand up with 1 health'],
@@ -66,7 +71,7 @@ export const RULE_SECTIONS: RuleSection[] = [
     entries: [
       {
         title: 'Knocked over',
-        icon: 'airline_seat_flat',
+        icon: 'fm:knocked-over',
         summary: 'Dwarf lies down and can’t act until back up.',
         lines: [
           'Stand up yourself with 2 actions in the same turn, or an adjacent Dwarf helps you up for 1 action.',
@@ -77,7 +82,7 @@ export const RULE_SECTIONS: RuleSection[] = [
       },
       {
         title: 'Unconscious',
-        icon: 'bedtime',
+        icon: 'fm:unconscious',
         summary: 'Out of health: skip your turn, swarm marker +1.',
         lines: [
           'No actions, no event card, no Rock ’n’ Stone cards. Advance the swarm marker 1 at the start of your turn.',
@@ -88,7 +93,7 @@ export const RULE_SECTIONS: RuleSection[] = [
       },
       {
         title: 'Stunned',
-        icon: 'star',
+        icon: 'fm:stunned',
         summary: 'Dwarf: 1 action next turn. Creature: skips its next activation.',
         lines: [
           'Dwarf: discard the token at the end of that turn.',
@@ -99,14 +104,14 @@ export const RULE_SECTIONS: RuleSection[] = [
       },
       {
         title: 'Webbed',
-        icon: 'blur_on',
+        icon: 'fm:webbed',
         summary: 'Dwarf can’t move next turn; every other action is fine.',
         lines: ['Caused by the Web Spitter. Discard the token at the end of that turn.'],
         page: 38,
       },
       {
         title: 'Frozen',
-        icon: 'ac_unit',
+        icon: 'fm:frozen',
         summary: 'Creature takes double damage and skips its next activation.',
         lines: [
           'Resistance still applies to the doubled damage.',
@@ -117,7 +122,7 @@ export const RULE_SECTIONS: RuleSection[] = [
       },
       {
         title: 'Scared',
-        icon: 'directions_run',
+        icon: 'fm:scared',
         summary: 'Push creatures up to 2 spaces away from the source. No damage.',
         lines: [
           'Up to 4 spaces if a weapon upgrade doubles the scare. Immobile creatures stay put.',
@@ -128,7 +133,7 @@ export const RULE_SECTIONS: RuleSection[] = [
       },
       {
         title: 'Shield (Gunner)',
-        icon: 'shield',
+        icon: 'fm:shield',
         summary: 'Gunner and adjacent Dwarves ignore creature damage and effects.',
         lines: [
           'If the Gunner moves away, the token stays: it still protects its space and the spaces around it, and creatures can’t enter it.',
@@ -138,14 +143,14 @@ export const RULE_SECTIONS: RuleSection[] = [
       },
       {
         title: 'Damage and [!]',
-        icon: 'water_drop',
+        icon: 'fm:special',
         summary: 'Damage symbol: lose 1 health cube. [!]: depends on the creature.',
         lines: ['Check the creature’s card or the Creatures tab for what its [!] does.'],
         page: 38,
       },
       {
         title: 'Warden shield',
-        icon: 'security',
+        icon: 'fm:warden',
         summary: 'Creatures within 3 spaces of a Warden cancel 2 damage per attack.',
         lines: [
           'Killing the Warden removes the shield at once.',
@@ -309,11 +314,13 @@ export const RULE_SECTIONS: RuleSection[] = [
     entries: [
       {
         title: 'Move',
+        icon: 'fm:act-move',
         lines: ['Up to 3 spaces; see the Moving table on the Turn tab.'],
         page: 12,
       },
       {
         title: 'Attack',
+        icon: 'fm:act-attack',
         lines: [
           'Target in range and line of sight. Each shot costs 1 ammo, even if every die is blank.',
           'Each matching resistance icon on the target cancels one hit of that type.',
@@ -322,6 +329,7 @@ export const RULE_SECTIONS: RuleSection[] = [
       },
       {
         title: 'Pickaxe',
+        icon: 'fm:act-pickaxe',
         lines: [
           'Roll the pickaxe die; each pickaxe symbol is 1 hit, and doubles may be split.',
           'Use hits to mine minerals, harvest tokens, hit an adjacent creature (1 damage), dig out a wall or cut a stalagmite. No ammo needed.',
@@ -330,16 +338,19 @@ export const RULE_SECTIONS: RuleSection[] = [
       },
       {
         title: 'Throw',
+        icon: 'fm:act-throw',
         lines: ['Only walls block a throw, and only the [T] space must be in range. See the Throw tab.'],
         page: 17,
       },
       {
         title: 'Overclock secondary weapon',
+        icon: 'fm:act-overclock',
         lines: ['1 action + 1 gold. Flip the card for good: it now holds up to 5 ammo but isn’t refilled.'],
         page: 17,
       },
       {
         title: 'Call down a supply pod',
+        icon: 'fm:act-resupply',
         lines: [
           '3 Nitra (gold can stand in). Place it on an empty cave space: not on tunnel exits, pits, tokens or miniatures.',
         ],
@@ -347,16 +358,19 @@ export const RULE_SECTIONS: RuleSection[] = [
       },
       {
         title: 'Collect supplies',
+        icon: 'fm:act-collect',
         lines: ['1 action while adjacent to the pod, limited by free room on your board.'],
         page: 18,
       },
       {
         title: 'Exchange supplies',
+        icon: 'fm:act-exchange',
         lines: ['With adjacent Dwarves: ammo, throwables, unattached upgrades, Rock ’n’ Stone cards. Never health.'],
         page: 19,
       },
       {
         title: 'Assist / revive',
+        icon: 'fm:act-revive',
         lines: [
           'Stand up yourself: 2 actions. Help up an adjacent Dwarf: 1 action.',
           'Revive an adjacent unconscious Dwarf: 1 action, they stand with 1 health.',
@@ -365,6 +379,7 @@ export const RULE_SECTIONS: RuleSection[] = [
       },
       {
         title: 'Driller: drilling',
+        icon: 'fm:act-drill',
         lines: ['Can move into a wall or stalagmite space, ending the move there. Not walls with minerals.'],
         page: 29,
       },
@@ -382,6 +397,14 @@ export const RULE_SECTIONS: RuleSection[] = [
         caption: 'Die results',
         text: true,
         columns: ['Symbol', 'Effect'],
+        rowIcons: [
+          'fm:die-pickaxe',
+          'fm:die-bullet',
+          'fm:die-armor-piercing',
+          'fm:die-flame',
+          'fm:die-explosion',
+          'fm:die-scare',
+        ],
         rows: [
           ['Pickaxe', '1 damage to an adjacent target, or dig, cut a stalagmite, mine'],
           ['Bullet', '1 damage'],
@@ -509,14 +532,14 @@ export const RULE_SECTIONS: RuleSection[] = [
       },
       {
         title: 'Web Spitter (2)',
-        icon: 'blur_on',
+        icon: 'fm:webbed',
         summary: '2 dice. [!] webs the target.',
         lines: ['Range 5. No resistances.'],
         page: 40,
       },
       {
         title: 'Exploder (3)',
-        icon: 'local_fire_department',
+        icon: 'fm:die-explosion',
         summary: 'Next to a Dwarf or sentry gun it blows up instead of attacking.',
         lines: [
           'Rolls the explosion die on every adjacent space (creatures too), then dies. Killing it sets it off the same way.',
@@ -526,7 +549,7 @@ export const RULE_SECTIONS: RuleSection[] = [
       },
       {
         title: 'Mactera Spawn (4)',
-        icon: 'flight',
+        icon: 'fm:stunned',
         summary: '1 die. [!] stuns. Flies.',
         lines: [
           'Flies over obstacles and stalagmites but can’t stop on them. Dies if frozen.',
@@ -536,7 +559,7 @@ export const RULE_SECTIONS: RuleSection[] = [
       },
       {
         title: 'Slasher (5)',
-        icon: 'content_cut',
+        icon: 'fm:knocked-over',
         summary: '2 dice. [!] knocks the target over.',
         lines: ['Resists pickaxe, bullet, flame.'],
         page: 40,
@@ -553,14 +576,14 @@ export const RULE_SECTIONS: RuleSection[] = [
       },
       {
         title: 'Spitball Infector (7)',
-        icon: 'spa',
+        icon: 'fm:knocked-over',
         summary: 'Immobile, range 7. 1 die, [!] knocks over.',
         lines: ['Kill reward: a Rock ’n’ Stone card. Resists explosion, pickaxe, bullet, stun.'],
         page: 42,
       },
       {
         title: 'Praetorian (8)',
-        icon: 'shield_with_heart',
+        icon: 'fm:damage',
         summary: '1 die. [!] deals 2 damage. Hit it from behind.',
         lines: [
           'Resists pickaxe, 2 flame, bullet; all ignored when attacked from behind.',
@@ -582,7 +605,7 @@ export const RULE_SECTIONS: RuleSection[] = [
       },
       {
         title: 'Warden (10)',
-        icon: 'security',
+        icon: 'fm:warden',
         summary: 'No attack. Shields creatures within 3 spaces (-2 damage per attack).',
         lines: [
           'Moves toward the nearest creature; if it then ends more than 3 spaces from any creature, a Grunt appears next to it (nearest a Dwarf).',

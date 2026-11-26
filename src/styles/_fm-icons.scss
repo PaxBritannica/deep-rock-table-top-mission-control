@@ -1,0 +1,63 @@
+// Original Mission Control icon set (see src/app/core/ui/fm-icons.data.ts).
+// Three families: round status tokens, square dice faces, plain action glyphs.
+
+.fmi {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.fmi-g {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  .s {
+    fill: var(--ink);
+    stroke: none;
+  }
+}
+
+// Actions inherit the text colour.
+.fmi--action .fmi-g {
+  stroke: currentColor;
+
+  .s {
+    fill: currentColor;
+  }
+}
+
+.fmi-bg {
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+
+.fmi--die .fmi-bg {
+  stroke-width: 2;
+}
+
+.fmi-ring {
+  fill: none;
+  stroke: rgb(36 33 28 / 22%);
+  stroke-width: 1;
+}
+
+.fmi-down { fill: var(--tone-down); }
+.fmi-out { fill: var(--tone-out); }
+.fmi-stun { fill: var(--tone-stun); }
+.fmi-web { fill: var(--tone-web); }
+.fmi-ice { fill: var(--tone-ice); }
+.fmi-scare { fill: var(--tone-scare); }
+.fmi-shield { fill: var(--tone-shield); }
+.fmi-damage { fill: var(--tone-damage); }
+.fmi-special { fill: var(--tone-special); }
+.fmi-warden { fill: var(--tone-warden); }
+.fmi-pick { fill: var(--die-pick); }
+.fmi-bullet { fill: var(--die-bullet); }
+.fmi-ap { fill: var(--die-ap); }
+.fmi-flame { fill: var(--die-flame); }
+.fmi-explosion { fill: var(--die-explosion); }
+.fmi-scaredie { fill: var(--die-scare); }

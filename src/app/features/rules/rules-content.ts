@@ -2,6 +2,7 @@ import { Component, ElementRef, computed, inject, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { RULE_SECTIONS, RuleSection } from '../../core/rules/rules.data';
 import { matchSection } from '../../core/rules/rules-search';
+import { isFmIcon } from '../../core/ui/fm-icons';
 
 /** Searchable rules text. Used by the mission drawer and the rules page. */
 @Component({
@@ -13,6 +14,7 @@ import { matchSection } from '../../core/rules/rules-search';
 export class RulesContent {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
+  protected readonly isFm = isFmIcon;
   protected readonly query = signal('');
   protected readonly sections = computed(() => {
     const q = this.query().trim().toLowerCase();

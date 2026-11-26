@@ -18,17 +18,31 @@
         }
         <thead>
           <tr>
-            @for (c of t.columns; track $index) {
-              <th scope="col">{{ c }}</th>
+            @for (c of t.columns; track $index; let ci = $index) {
+              <th scope="col">
+                @if (t.columnIcons?.[ci]; as ico) {
+                  <mat-icon class="ico ico--col" [svgIcon]="ico" />
+                }
+                {{ c }}
+              </th>
             }
           </tr>
         </thead>
         <tbody>
-          @for (row of t.rows; track $index) {
+          @for (row of t.rows; track $index; let ri = $index) {
             <tr>
               @for (cell of row; track $index; let first = $first) {
                 @if (first) {
-                  <th scope="row">{{ cell }}</th>
+                  <th scope="row">
+                    @if (t.rowIcons?.[ri]; as ico) {
+                      <span class="row-head">
+                        <mat-icon class="ico ico--row" [svgIcon]="ico" />
+                        {{ cell }}
+                      </span>
+                    } @else {
+                      {{ cell }}
+                    }
+                  </th>
                 } @else {
                   <td>{{ cell }}</td>
                 }
@@ -43,7 +57,9 @@
       @for (entry of section.entries; track entry.title) {
         <div class="entry" [class.entry--card]="section.layout === 'cards'">
           <h4>
-            @if (entry.icon) {
+            @if (isFm(entry.icon)) {
+              <mat-icon class="ico" [class.ico--card]="section.layout === 'cards'" [svgIcon]="entry.icon" />
+            } @else if (entry.icon) {
               <mat-icon>{{ entry.icon }}</mat-icon>
             }
             <span>{{ entry.title }}</span>

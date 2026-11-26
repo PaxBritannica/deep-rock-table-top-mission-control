@@ -97,6 +97,38 @@
   white-space: nowrap;
 }
 
+// ---- App icons (fm:*) ----------------------------------------------------
+
+.ico {
+  flex: none;
+  width: 30px !important;
+  height: 30px !important;
+  color: var(--amber-deep); // action glyphs use currentColor
+
+  &--card {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  &--row {
+    width: 30px !important;
+    height: 30px !important;
+  }
+
+  &--col {
+    display: block;
+    width: 40px !important;
+    height: 40px !important;
+    margin-bottom: 4px;
+  }
+}
+
+.row-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 // Tiles for quick checks (status effects, creatures)
 .cards {
   display: grid;
