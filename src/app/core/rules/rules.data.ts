@@ -1,19 +1,29 @@
 /**
- * Quick-reference rules shown in Mission Control.
+ * Quick-reference rules shown in Mission Control and on the Rules page.
  *
- * Written as short paraphrases (not copied rulebook text) from a rules summary
- * of the base game. Check numbers against your own 2nd-edition rulebook and
- * edit freely: the panel renders whatever is in RULE_SECTIONS.
+ * Paraphrased in our own words from the Deep Rock Galactic: The Board Game
+ * 2nd-edition rulebook (deluxe, 2024), mainly its green reference pages
+ * (pp. 36-47). Never paste rulebook text here; keep lines short.
+ * `page` points back to the rulebook for the full wording.
  */
 export interface RuleEntry {
   title: string;
-  /** One or more short lines; each renders as its own paragraph/bullet. */
+  /** One-line gist, shown in bold on cards. */
+  summary?: string;
+  /** Material Symbols icon name (cards layout). */
+  icon?: string;
+  /** Short lines; each renders as its own paragraph. */
   lines: string[];
+  /** Rulebook page for the full wording. */
+  page?: number;
 }
 
 export interface RuleTable {
+  caption?: string;
   columns: string[];
   rows: (string | number)[][];
+  /** Text table (left-aligned, wrapping) instead of a numeric stat table. */
+  text?: boolean;
 }
 
 export interface RuleSection {
@@ -22,40 +32,275 @@ export interface RuleSection {
   tab: string;
   title: string;
   icon: string;
+  /** 'cards' renders entries as a grid of compact tiles. */
+  layout?: 'list' | 'cards';
+  /** Tables shown before the entries. */
+  tables?: RuleTable[];
   entries: RuleEntry[];
-  table?: RuleTable;
 }
 
 export const RULE_SECTIONS: RuleSection[] = [
+  // ---------------------------------------------------------------------
+  {
+    id: 'status',
+    tab: 'Status',
+    title: 'Status effects',
+    icon: 'personal_injury',
+    layout: 'cards',
+    tables: [
+      {
+        caption: 'Knocked over or unconscious?',
+        text: true,
+        columns: ['', 'Knocked over', 'Unconscious (0 health)'],
+        rows: [
+          ['Actions', 'None until you are standing', 'None'],
+          ['Getting up', '2 actions on your own, or 1 action from an adjacent Dwarf', 'An adjacent Dwarf revives you for 1 action: stand up with 1 health'],
+          ['Event card', 'Draw as usual', 'Skip it'],
+          ['Swarm marker', 'No effect', '+1 at the start of each of your turns'],
+          ['Rock ’n’ Stone', 'You can still play cards', 'You cannot play cards'],
+          ['Creatures', 'Still attack you', 'Ignore you (may cross your space, never stop on it)'],
+          ['Exchange supplies', 'Others may trade with you', 'Others may trade with you'],
+        ],
+      },
+    ],
+    entries: [
+      {
+        title: 'Knocked over',
+        icon: 'airline_seat_flat',
+        summary: 'Dwarf lies down and can’t act until back up.',
+        lines: [
+          'Stand up yourself with 2 actions in the same turn, or an adjacent Dwarf helps you up for 1 action.',
+          'Creatures keep attacking you. Optional events that need you on your feet are skipped.',
+          'Knocked over and stunned at once: 1 action is not enough to stand up alone.',
+        ],
+        page: 38,
+      },
+      {
+        title: 'Unconscious',
+        icon: 'bedtime',
+        summary: 'Out of health: skip your turn, swarm marker +1.',
+        lines: [
+          'No actions, no event card, no Rock ’n’ Stone cards. Advance the swarm marker 1 at the start of your turn.',
+          'Creatures look for other targets. An adjacent Dwarf revives you for 1 action: stand up with 1 health.',
+          'Everyone unconscious at the same time: the mission fails.',
+        ],
+        page: 38,
+      },
+      {
+        title: 'Stunned',
+        icon: 'star',
+        summary: 'Dwarf: 1 action next turn. Creature: skips its next activation.',
+        lines: [
+          'Dwarf: discard the token at the end of that turn.',
+          'Creature: next time it would activate, remove the token instead.',
+          'Frozen creatures can’t be stunned; freezing a stunned creature removes the stun.',
+        ],
+        page: 38,
+      },
+      {
+        title: 'Webbed',
+        icon: 'blur_on',
+        summary: 'Dwarf can’t move next turn; every other action is fine.',
+        lines: ['Caused by the Web Spitter. Discard the token at the end of that turn.'],
+        page: 38,
+      },
+      {
+        title: 'Frozen',
+        icon: 'ac_unit',
+        summary: 'Creature takes double damage and skips its next activation.',
+        lines: [
+          'Resistance still applies to the doubled damage.',
+          'Flying creatures die as soon as they are frozen.',
+          'Dwarves can’t be frozen.',
+        ],
+        page: 38,
+      },
+      {
+        title: 'Scared',
+        icon: 'directions_run',
+        summary: 'Push creatures up to 2 spaces away from the source. No damage.',
+        lines: [
+          'Up to 4 spaces if a weapon upgrade doubles the scare. Immobile creatures stay put.',
+          'Never affects Dwarves or the sentry gun. Explosion-resistant creatures are still scared.',
+          'Scared and stunned or frozen by the same attack: the attacker picks one effect.',
+        ],
+        page: 20,
+      },
+      {
+        title: 'Shield (Gunner)',
+        icon: 'shield',
+        summary: 'Gunner and adjacent Dwarves ignore creature damage and effects.',
+        lines: [
+          'If the Gunner moves away, the token stays: it still protects its space and the spaces around it, and creatures can’t enter it.',
+          'Discard it at the start of the Gunner’s next turn; he gets it back next time he collects from a supply pod.',
+        ],
+        page: 38,
+      },
+      {
+        title: 'Damage and [!]',
+        icon: 'water_drop',
+        summary: 'Damage symbol: lose 1 health cube. [!]: depends on the creature.',
+        lines: ['Check the creature’s card or the Creatures tab for what its [!] does.'],
+        page: 38,
+      },
+      {
+        title: 'Warden shield',
+        icon: 'security',
+        summary: 'Creatures within 3 spaces of a Warden cancel 2 damage per attack.',
+        lines: [
+          'Killing the Warden removes the shield at once.',
+          'In a multi-target attack you may hit the Warden first if it isn’t farther away than the others.',
+          'Ignore-resistance upgrades don’t get through this shield.',
+        ],
+        page: 43,
+      },
+    ],
+  },
+
+  // ---------------------------------------------------------------------
+  {
+    id: 'missed',
+    tab: 'Missed',
+    title: 'Often missed',
+    icon: 'lightbulb',
+    entries: [
+      {
+        title: 'Drop pod',
+        lines: [
+          'Dwarves inside can attack but can’t be attacked, and ignore event cards.',
+          'Once the objectives are done, Dwarves aboard stop drawing event cards.',
+        ],
+        page: 46,
+      },
+      {
+        title: 'Double hits',
+        lines: ['A double on one weapon die must go to a single target. Pickaxe doubles may be split.'],
+        page: 46,
+      },
+      {
+        title: 'Stalagmites',
+        lines: ['Block movement for everyone except the Driller, the Scout, BOSCO and flying creatures.'],
+        page: 46,
+      },
+      {
+        title: 'Grunts and line of sight',
+        lines: ['Grunts are small: you can shoot over them.'],
+        page: 41,
+      },
+      {
+        title: 'Throwables',
+        lines: [
+          'They hurt Dwarves too.',
+          'With an area effect only the [T] space must be in range, and you choose how to angle the blast.',
+        ],
+        page: 46,
+      },
+      {
+        title: 'Minerals and destruction',
+        lines: [
+          'A stalagmite destroyed by a throwable or the Driller’s drill loses its minerals: no mineral roll.',
+          'A wall with a mineral blown up by a throwable drops the mineral on its space for anyone to collect.',
+          'The Driller can’t drill into walls that contain minerals.',
+        ],
+        page: 47,
+      },
+      {
+        title: 'Weapon upgrades',
+        lines: ['You can keep an upgrade unattached, attach it later for free, or hand it over with Exchange supplies.'],
+        page: 46,
+      },
+      {
+        title: 'Creature activation',
+        lines: [
+          'Creatures only act when a card tells them to. They attack rather than move, and go passive again at the start of the next player’s turn.',
+        ],
+        page: 46,
+      },
+      {
+        title: 'Out of miniatures',
+        lines: ['Can’t place a creature type? Place a Grunt for each one missing. Out of Grunts: place nothing.'],
+        page: 47,
+      },
+      {
+        title: 'Gold and Nitra',
+        lines: ['Gold can pay for a supply pod in place of Nitra. Gold also pays for overclocking.'],
+        page: 47,
+      },
+      {
+        title: 'Lying-down Dwarves',
+        lines: ['You may exchange supplies with a Dwarf who is knocked over or unconscious.'],
+        page: 47,
+      },
+      {
+        title: 'Ammo',
+        lines: ['Every shot costs ammo unless the weapon says otherwise. The sentry gun only costs ammo to place.'],
+        page: 47,
+      },
+      {
+        title: 'Solo mode',
+        lines: ['You may play Rock ’n’ Stone cards on yourself, whatever the card says.'],
+        page: 47,
+      },
+    ],
+  },
+
+  // ---------------------------------------------------------------------
   {
     id: 'turn',
     tab: 'Turn',
     title: 'Your turn',
     icon: 'sync',
+    tables: [
+      {
+        caption: 'Moving',
+        text: true,
+        columns: ['', 'Spaces'],
+        rows: [
+          ['Stop on or pass', 'Empty spaces, the drop pod, tokens'],
+          ['Pass only', 'Dwarves, special miniatures, tunnel exits'],
+          ['Never', 'Black spaces, stalagmites, creatures, deep pits'],
+        ],
+      },
+      {
+        caption: 'Line of sight',
+        text: true,
+        columns: ['', 'Things in the way'],
+        rows: [
+          ['Clear over', 'Tokens, Dwarves lying down, Grunts, special miniatures'],
+          ['Blocked by', 'Standing Dwarves, every other creature, walls, flames, stalagmites'],
+        ],
+      },
+    ],
     entries: [
       {
         title: 'Action phase',
         lines: [
-          'Take up to 3 actions in any order. Repeating the same action is allowed, and you may stop early.',
-          'Stunned: only 1 action. Unconscious: no actions.',
+          '3 actions in any order, repeats allowed (1 if stunned, 0 if unconscious). You may stop early.',
+          'Knocked over: your first 2 actions go to standing up.',
+          'Unconscious at the start of your turn: swarm marker +1.',
         ],
+        page: 44,
       },
       {
         title: 'Event phase',
         lines: [
-          'Draw one event card, resolve it, discard it.',
-          'Skip the draw if you are unconscious, or already aboard the drop pod after the objectives are done.',
-          'Event deck empty? Shuffle the discards into a new deck.',
+          'Draw and resolve 1 event card, unless you are unconscious or aboard the drop pod after the objectives are done.',
+          'If it triggers a swarm: draw a swarm card, spawn, then activate every creature.',
+          'Event deck empty: shuffle the discards into a new deck.',
         ],
+        page: 44,
       },
       {
-        title: 'Free actions',
+        title: 'Rock ’n’ Stone cards',
         lines: [
-          "Rock 'n' Stone cards cost no action and can be played on anyone's turn, but not while a creature is moving or attacking (unless the card says so).",
+          'Free: play any number, on your turn or someone else’s, but not while a creature is moving or attacking (unless the card says so).',
         ],
+        page: 19,
       },
     ],
   },
+
+  // ---------------------------------------------------------------------
   {
     id: 'actions',
     tab: 'Actions',
@@ -64,194 +309,333 @@ export const RULE_SECTIONS: RuleSection[] = [
     entries: [
       {
         title: 'Move',
-        lines: [
-          'Up to 3 spaces. Walls, stalagmites, creatures and deep pits block you.',
-          'You can pass through dwarves, special miniatures and tunnel exits but cannot stop on them.',
-        ],
+        lines: ['Up to 3 spaces; see the Moving table on the Turn tab.'],
+        page: 12,
       },
       {
         title: 'Attack',
         lines: [
-          'Target must be in range and line of sight. Every shot spends 1 ammo, even if you roll only blanks.',
-          'Each hit symbol is 1 damage; scare symbols do nothing. A double symbol must go to a single target.',
-          'Stun and freeze effects only apply if the attack hits. Subtract the target’s resistance from the hits.',
+          'Target in range and line of sight. Each shot costs 1 ammo, even if every die is blank.',
+          'Each matching resistance icon on the target cancels one hit of that type.',
         ],
+        page: 13,
       },
       {
         title: 'Pickaxe',
         lines: [
-          'Roll the white die: each pickaxe symbol is 1 hit (doubles may be split).',
-          'Spend hits to mine, farm, dig an adjacent wall into a 1-space cave, cut a stalagmite, or defend yourself (1 damage to an adjacent creature). No ammo needed.',
+          'Roll the pickaxe die; each pickaxe symbol is 1 hit, and doubles may be split.',
+          'Use hits to mine minerals, harvest tokens, hit an adjacent creature (1 damage), dig out a wall or cut a stalagmite. No ammo needed.',
         ],
-      },
-      {
-        title: 'Driller: drilling',
-        lines: [
-          'May move into an empty wall or stalagmite space, ending the move there. Walls with minerals cannot be drilled.',
-        ],
+        page: 15,
       },
       {
         title: 'Throw',
-        lines: [
-          'Throwables are one-shot. Only walls block line of sight, and only the target space must be in range.',
-          'Area effects hit dwarves too. Some effects last until the start of the thrower’s next turn.',
-        ],
+        lines: ['Only walls block a throw, and only the [T] space must be in range. See the Throw tab.'],
+        page: 17,
       },
       {
         title: 'Overclock secondary weapon',
-        lines: [
-          'Costs 1 action and 1 gold. Flip the weapon card for good: it can now hold 5 ammo, but you don’t gain any ammo from flipping.',
-          'Re-attach any upgrade tokens to the overclocked side.',
-        ],
+        lines: ['1 action + 1 gold. Flip the card for good: it now holds up to 5 ammo but isn’t refilled.'],
+        page: 17,
       },
       {
-        title: 'Resupply',
+        title: 'Call down a supply pod',
         lines: [
-          'Pay 3 Nitra (gold can stand in) to call a supply pod onto an empty cave space, not a tunnel exit or pit.',
-          'Collecting from an adjacent pod costs 1 action and is limited by free room on your board.',
+          '3 Nitra (gold can stand in). Place it on an empty cave space: not on tunnel exits, pits, tokens or miniatures.',
         ],
+        page: 18,
+      },
+      {
+        title: 'Collect supplies',
+        lines: ['1 action while adjacent to the pod, limited by free room on your board.'],
+        page: 18,
       },
       {
         title: 'Exchange supplies',
-        lines: [
-          'Swap ammo, throwables, unattached upgrades and Rock ’n’ Stone cards with an adjacent dwarf. Health can never be traded.',
-        ],
+        lines: ['With adjacent Dwarves: ammo, throwables, unattached upgrades, Rock ’n’ Stone cards. Never health.'],
+        page: 19,
       },
       {
         title: 'Assist / revive',
         lines: [
-          'Getting up on your own after being knocked over: 2 actions. Helping an adjacent knocked-over dwarf: 1 action.',
-          'Reviving an adjacent unconscious dwarf: 1 action, they stand up with 1 health.',
+          'Stand up yourself: 2 actions. Help up an adjacent Dwarf: 1 action.',
+          'Revive an adjacent unconscious Dwarf: 1 action, they stand with 1 health.',
         ],
+        page: 19,
+      },
+      {
+        title: 'Driller: drilling',
+        lines: ['Can move into a wall or stalagmite space, ending the move there. Not walls with minerals.'],
+        page: 29,
       },
     ],
   },
+
+  // ---------------------------------------------------------------------
+  {
+    id: 'dice',
+    tab: 'Dice',
+    title: 'Dice & upgrades',
+    icon: 'casino',
+    tables: [
+      {
+        caption: 'Die results',
+        text: true,
+        columns: ['Symbol', 'Effect'],
+        rows: [
+          ['Pickaxe', '1 damage to an adjacent target, or dig, cut a stalagmite, mine'],
+          ['Bullet', '1 damage'],
+          ['Armor-piercing', '1 damage'],
+          ['Flame', '1 damage'],
+          ['Explosion', '1 damage to every target in the blast area you choose, Dwarves included'],
+          ['Scare', 'No damage; push creatures up to 2 spaces away'],
+        ],
+      },
+    ],
+    entries: [
+      {
+        title: 'Weapon upgrade effects',
+        lines: [
+          'Double: one die result per attack counts double (a doubled scare pushes up to 4).',
+          'Ignore resistance: all damage goes through (not the Warden’s shield).',
+          'Range: +1. Reroll: reroll 1 die per attack and keep the new result.',
+          'Stun: every creature hit is stunned.',
+          'Bonus die: after the normal roll, add an explosion, flame or armor-piercing die; the bonus bullet die also stuns what it hits.',
+          'Any ammo: the weapon may use primary, secondary or both.',
+        ],
+        page: 21,
+      },
+    ],
+  },
+
+  // ---------------------------------------------------------------------
   {
     id: 'swarm',
     tab: 'Swarm',
-    title: 'Swarm threat',
+    title: 'Events & swarms',
     icon: 'warning',
     entries: [
       {
-        title: 'Moving the marker',
+        title: 'Swarm threat',
         lines: [
-          'Event cards push the marker 1 or 2 spaces. It also moves 1 at the start of each unconscious dwarf’s turn.',
-          'The starting space depends on the hazard level.',
+          'Events push the marker 1 or 2 spaces. Landing on a creature symbol triggers a swarm: flip a swarm card, place the creatures, activate every creature.',
+          'Two swarm cards at once: place them one card at a time, then activate everything, new arrivals included.',
         ],
+        page: 22,
       },
       {
-        title: 'Swarms',
+        title: 'Spawning',
         lines: [
-          'Landing on a creature symbol triggers a swarm: flip a swarm card, place what it shows, then activate every creature.',
-          'If two swarm cards are revealed, place them one at a time, then activate everything.',
+          'Place creatures on (or as close as possible to) the tunnel exit, on the spaces nearest a Dwarf; the active Dwarf breaks ties.',
+          'Exit 3 not revealed yet? Its creatures aren’t placed.',
         ],
+        page: 22,
       },
       {
-        title: 'End of the track',
+        title: 'Optional events',
+        lines: ['Most need you standing: if you’re lying down, ignore it.'],
+        page: 22,
+      },
+      {
+        title: 'Hazard level',
         lines: [
-          'If the marker must advance from the last space, the mission fails, unless at least one dwarf is aboard the drop pod (modest success).',
-          'Optional "Overwhelming odds" variant: at the end of the track draw swarm cards instead of events; an empty swarm deck means failure.',
+          'Sets where the swarm marker starts (hazard 4 starts on the "3 - 5" space).',
+          'Hazard 4 and 5: an extra Grunt on each tunnel exit at setup. Hazard 5: Grunts also deal 1 damage on [!].',
         ],
+        page: 8,
+      },
+      {
+        title: 'End of the track (base rules)',
+        lines: [
+          'Marker must move past the last space: mission failed, or a modest success if at least one Dwarf is aboard the drop pod.',
+          'At our table the House rules tab replaces this.',
+        ],
+        page: 27,
+      },
+      {
+        title: 'Harder variants',
+        lines: [
+          'Constant critters: remove Starch nuts, Crack in the floor and Ouch! from the event deck.',
+          'Climactic ending: when the drop pod returns, trigger a swarm instead of drawing an event.',
+          'Overwhelming odds: at the end of the track draw swarm cards instead of events; an empty swarm deck fails the mission.',
+        ],
+        page: 27,
       },
     ],
   },
+
+  // ---------------------------------------------------------------------
   {
     id: 'creatures',
     tab: 'Bugs',
     title: 'Creatures',
     icon: 'pest_control',
-    entries: [
+    layout: 'cards',
+    tables: [
       {
-        title: 'Activation',
-        lines: [
-          'Creatures only act when an event or swarm card says so, in ascending activation number.',
-          'Each one attacks a dwarf in range and line of sight; otherwise it moves toward the nearest dwarf.',
-          'Ties go to the dwarf who most recently took a turn. Unconscious dwarves are ignored.',
-        ],
-      },
-      {
-        title: 'Movement',
-        lines: [
-          'May pass through other creatures, never through dwarves. Can end on tunnel exits and pits, never in the drop pod.',
-        ],
-      },
-      {
-        title: 'Spawning',
-        lines: [
-          'Place new creatures at tunnel exits, on or as close as possible to the exit, nearest a dwarf.',
-          'Out of a creature type? Place a Grunt for each missing one. Out of Grunts? Nothing spawns.',
-          'Brood Nexus: roll 2 dice, one Grunt per [!].',
+        caption: 'Activation order, health, range, move',
+        columns: ['Creature', '#', 'HP', 'R', 'M'],
+        rows: [
+          ['Grunt', 1, 1, 1, 3],
+          ['Web Spitter', 2, 2, 5, 3],
+          ['Exploder', 3, 1, 1, 3],
+          ['Mactera Spawn', 4, 2, 3, 3],
+          ['Slasher', 5, 2, 1, 3],
+          ['Brood Nexus', 6, 5, '–', 0],
+          ['Spitball Infector', 7, 5, 7, 0],
+          ['Praetorian', 8, 6, 2, 3],
+          ['Oppressor', 9, 7, 1, 3],
+          ['Warden', 10, 2, 3, 3],
         ],
       },
     ],
-    table: {
-      columns: ['Creature', 'Health', 'Range', 'Move'],
-      rows: [
-        ['Grunt', 1, 1, 3],
-        ['Exploder', 1, 1, 3],
-        ['Web Spitter', 2, 5, 3],
-        ['Mactera Spawn', 2, 3, 3],
-        ['Slasher', 2, 1, 3],
-        ['Warden', 2, 3, 3],
-        ['Brood Nexus', 5, '–', 0],
-        ['Spitball Infector', 5, 7, 0],
-        ['Praetorian', 6, 2, 3],
-        ['Oppressor', 7, 1, 3],
-      ],
-    },
-  },
-  {
-    id: 'health',
-    tab: 'Health',
-    title: 'Health & conditions',
-    icon: 'favorite',
     entries: [
       {
-        title: 'Health',
+        title: 'How creatures activate',
+        icon: 'format_list_numbered',
+        summary: 'Lowest number first; attack if possible, otherwise move.',
         lines: [
-          'Dwarves start with 5 health. At 0 you are unconscious: no actions, no event card, and the swarm marker moves 1 at the start of your turn.',
-          'Red sugar heals up to 3. Supply pods can bring health.',
-          'Everyone unconscious at the same time: the mission fails.',
+          'Moving creatures stop as soon as they’re in range, heading for the nearest Dwarf; ties go to whoever took a turn most recently.',
+          'Same type: the one closest to a Dwarf goes first. They pass through creatures, never Dwarves, may end on tunnel exits and pits, and never enter or attack the drop pod.',
         ],
+        page: 24,
       },
       {
-        title: 'Stunned',
-        lines: ['Dwarf: only 1 action next turn. Creature: skips its next activation. Frozen creatures cannot be stunned.'],
+        title: 'Grunt (1)',
+        icon: 'pest_control',
+        summary: '1 die. [!] does nothing, except 1 damage on hazard 5.',
+        lines: ['No resistances. Small: doesn’t block line of sight.'],
+        page: 40,
       },
       {
-        title: 'Webbed',
-        lines: ['Dwarf cannot move on their next turn; other actions are fine.'],
+        title: 'Web Spitter (2)',
+        icon: 'blur_on',
+        summary: '2 dice. [!] webs the target.',
+        lines: ['Range 5. No resistances.'],
+        page: 40,
       },
       {
-        title: 'Frozen',
+        title: 'Exploder (3)',
+        icon: 'local_fire_department',
+        summary: 'Next to a Dwarf or sentry gun it blows up instead of attacking.',
         lines: [
-          'Creature takes double damage (resistance still applies) and skips its next activation. Frozen flying creatures die at once.',
+          'Rolls the explosion die on every adjacent space (creatures too), then dies. Killing it sets it off the same way.',
+          'Its scare result only pushes creatures. Resists 1 explosion.',
         ],
+        page: 41,
+      },
+      {
+        title: 'Mactera Spawn (4)',
+        icon: 'flight',
+        summary: '1 die. [!] stuns. Flies.',
+        lines: [
+          'Flies over obstacles and stalagmites but can’t stop on them. Dies if frozen.',
+          'Resists 2 pickaxe, 1 flame.',
+        ],
+        page: 40,
+      },
+      {
+        title: 'Slasher (5)',
+        icon: 'content_cut',
+        summary: '2 dice. [!] knocks the target over.',
+        lines: ['Resists pickaxe, bullet, flame.'],
+        page: 40,
+      },
+      {
+        title: 'Brood Nexus (6)',
+        icon: 'egg',
+        summary: 'Immobile, no damage. Activation: roll 2 dice, a Grunt per [!].',
+        lines: [
+          'Grunts go on adjacent empty spaces nearest a Dwarf. Roll once more when it dies.',
+          'Resists bullet and stun.',
+        ],
+        page: 43,
+      },
+      {
+        title: 'Spitball Infector (7)',
+        icon: 'spa',
+        summary: 'Immobile, range 7. 1 die, [!] knocks over.',
+        lines: ['Kill reward: a Rock ’n’ Stone card. Resists explosion, pickaxe, bullet, stun.'],
+        page: 42,
+      },
+      {
+        title: 'Praetorian (8)',
+        icon: 'shield_with_heart',
+        summary: '1 die. [!] deals 2 damage. Hit it from behind.',
+        lines: [
+          'Resists pickaxe, 2 flame, bullet; all ignored when attacked from behind.',
+          'Faces the way it moves; turns on the spot to attack someone behind it.',
+          'Kill reward: a Rock ’n’ Stone card.',
+        ],
+        page: 42,
+      },
+      {
+        title: 'Oppressor (9)',
+        icon: 'swords',
+        summary: '1 die. [!] knocks over and deals 1 damage. Takes 2 spaces.',
+        lines: [
+          'Moves in a straight shortest path, smashing stalagmites, Grunts and walls (minerals drop). Ending next to its target gives a free attack.',
+          'Resists 2 bullet, armor-piercing, pickaxe, flame, stun; all ignored from behind. Area weapons hitting both spaces don’t double the damage.',
+          'Kill reward: a Rock ’n’ Stone card.',
+        ],
+        page: 43,
+      },
+      {
+        title: 'Warden (10)',
+        icon: 'security',
+        summary: 'No attack. Shields creatures within 3 spaces (-2 damage per attack).',
+        lines: [
+          'Moves toward the nearest creature; if it then ends more than 3 spaces from any creature, a Grunt appears next to it (nearest a Dwarf).',
+          'Resists flame and explosion.',
+        ],
+        page: 43,
       },
     ],
   },
+
+  // ---------------------------------------------------------------------
   {
-    id: 'hazard',
-    tab: 'Hazard',
-    title: 'Hazard levels',
-    icon: 'speed',
+    id: 'throw',
+    tab: 'Throw',
+    title: 'Throwables',
+    icon: 'sports_handball',
+    tables: [
+      {
+        caption: 'Range 4 unless noted',
+        text: true,
+        columns: ['Throwable', 'What it does'],
+        rows: [
+          ['Incendiary grenade', '2 flame dice on each affected space'],
+          ['Frag grenade', '2 explosion dice on each affected space'],
+          ['Plasma grenade', '2 explosion dice on the target and the 2 spaces behind it in a line'],
+          ['Impact axe', '2 armor-piercing dice, keep the better one, single target'],
+          ['Cluster grenade', '2 explosion dice added together on each hit space except the target space'],
+          ['Phosphor grenade', '1 flame die on each affected space, target included'],
+          ['Corrosive bomb', '1 damage to everything in the area'],
+          ['Electrocution grenade', '1 bullet die on the area; every creature there is stunned even on a blank'],
+          ['Cryo grenade', 'Ground creatures in the area are frozen; flyers die'],
+          ['Sticky grenade', 'Move a target up to 3 spaces, then 1 explosion die on the blast (Dwarves too). Not huge or immobile creatures'],
+          ['Proximity grenade', '2 explosion dice on the first walking creature to enter; if scared, it goes back the way it came'],
+          ['Inhibitor field', 'Creatures can’t enter or leave the area (they can still spawn there). Ends at the start of your next turn'],
+          ['L.U.R.E. grenade', 'Indestructible decoy that blocks movement; creatures go for it unless a Dwarf or sentry is closer. Ends at the start of your next turn'],
+          ['Satchel charge', 'Range 1. Detonate any time, even during creature moves: 2 explosion dice, also wrecks platforms, walls, stalagmites'],
+          ['Tunnel carver', 'Clears walls and stalagmites on 3 spaces in a line'],
+          ['Soil smasher', 'Clears walls and stalagmites around the target space'],
+        ],
+      },
+    ],
     entries: [
       {
-        title: 'Choosing',
-        lines: ['Agree on a level from 1 (easiest) to 5 (hardest) before setup. It sets where the swarm marker starts.'],
-      },
-      {
-        title: 'Hazard 4 and 5',
-        lines: ['Place one extra Grunt on each tunnel exit during setup.'],
-      },
-      {
-        title: 'Hazard 5',
-        lines: ['Grunts also deal 1 damage on a [!] result.'],
+        title: 'Minerals in cleared walls',
+        lines: ['Satchel charge, tunnel carver and soil smasher leave wall minerals on the floor for pickup.'],
+        page: 36,
       },
     ],
   },
+
+  // ---------------------------------------------------------------------
   {
-    id: 'mission',
+    id: 'extract',
     tab: 'Extract',
     title: 'Minerals & extraction',
     icon: 'rocket_launch',
@@ -259,26 +643,32 @@ export const RULE_SECTIONS: RuleSection[] = [
       {
         title: 'Minerals',
         lines: [
-          'Mine with the pickaxe, or roll the mineral die when you destroy a stalagmite. Minerals go to the M.U.L.E. / shared supply.',
-          'Aquarqs: one per dwarf at a time; drop it at a mine head to add it to the supply.',
+          'Morkite: usually the main objective, found in the walls.',
+          'Nitra: 3 buys a supply pod. Gold: stands in for Nitra and pays for overclocks.',
+          'Aquarq: heavy, one per Dwarf, deliver it to a mine head.',
         ],
+        page: 39,
       },
       {
-        title: 'Drop pod',
+        title: 'Drop pod lands',
         lines: [
-          'It lands once the objectives are complete. Creatures and objects on its cave segment are removed; dwarves there are moved next to it and knocked over.',
-          'Dwarves aboard can attack but cannot be attacked and ignore events.',
+          'When the objectives are met. Creatures and objects on its segment are crushed; Dwarves there jump to the nearest empty space next to it and are knocked over.',
         ],
+        page: 27,
       },
       {
-        title: 'Winning and losing',
+        title: 'Win or lose',
         lines: [
-          'Win: all objectives done and every dwarf aboard the pod.',
-          'Lose: all dwarves unconscious at once, or the swarm marker must advance from the final space with nobody aboard.',
+          'Win: objectives met and every Dwarf aboard (any pod space).',
+          'Lose: everyone unconscious at once, or the swarm marker must move past its last space.',
+          'Modest success: that last case, but at least one Dwarf made it aboard.',
         ],
+        page: 27,
       },
     ],
   },
+
+  // ---------------------------------------------------------------------
   {
     id: 'deepdive',
     tab: 'Dive',
@@ -286,22 +676,26 @@ export const RULE_SECTIONS: RuleSection[] = [
     icon: 'layers',
     entries: [
       {
-        title: 'Carried over',
+        title: 'Carry over',
         lines: [
-          'Current health, ammo, Rock ’n’ Stone cards, throwables, overclocked weapons and kept upgrades.',
+          'Health, ammo, Rock ’n’ Stone cards, throwables, overclocks and weapon upgrades carry over. Weapons are not reloaded.',
           'Only class tokens (Engineer platforms, Gunner ziplines) are restocked.',
         ],
+        page: 33,
       },
       {
         title: 'Between missions',
         lines: [
-          'Leftover Nitra is lost. Each leftover gold buys 1 health, ammo, throwable or Rock ’n’ Stone card for anyone on the team.',
-          'Any dwarf may discard upgrades to fully heal or fully reload one weapon.',
-          'Dwarves unconscious at a successful extraction start the next mission with 1 health. A failed mission ends the Deep Dive.',
+          'Discard upgrades to fully heal yourself, or to fully reload 1 weapon for any Dwarf.',
+          'Discard all Nitra and gold; each gold gives any Dwarf 1 health, ammo, throwable or Rock ’n’ Stone card (max 1 throwable and 1 card per Dwarf).',
+          'Unconscious at a successful extraction: start the next mission with 1 health. A failed mission ends the dive.',
         ],
+        page: 33,
       },
     ],
   },
+
+  // ---------------------------------------------------------------------
   {
     id: 'house',
     tab: 'House',
@@ -311,8 +705,8 @@ export const RULE_SECTIONS: RuleSection[] = [
       {
         title: 'Swarm overflow',
         lines: [
-          'Reaching the end of the swarm track does not end the mission. Restart the marker and log an overflow in Mission Control.',
-          'Every overflow doubles what "+1 swarm" events are worth: +2, then +4, then +8. Mission Control shows the current value.',
+          'Reaching the end of the swarm track doesn’t end the mission: restart the marker and tap Swarm meter maxed.',
+          'Each overflow doubles what "+1 swarm" events are worth: +2, then +4, then +8. Mission Control shows the current value.',
         ],
       },
     ],

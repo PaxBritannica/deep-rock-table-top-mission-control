@@ -1,16 +1,7 @@
 import { Component, ElementRef, computed, inject, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { RULE_SECTIONS, RuleSection } from '../../core/rules/rules.data';
-
-function matches(section: RuleSection, q: string): RuleSection | null {
-  if (!q) return section;
-  const hit = (s: string | number) => s.toString().toLowerCase().includes(q);
-  if (hit(section.title)) return section;
-  const entries = section.entries.filter((e) => hit(e.title) || e.lines.some(hit));
-  const tableHit = section.table?.rows.some((r) => r.some(hit)) ?? false;
-  if (!entries.length && !tableHit) return null;
-  return { ...section, entries, table: tableHit ? section.table : undefined };
-}
+import { matchSection } from '../../core/rules/rules-search';
 
 /** Searchable rules text. Used by the mission drawer and the rules page. */
 @Component({
@@ -25,15 +16,28 @@ export class RulesContent {
   protected readonly query = signal('');
   protected readonly sections = computed(() => {
     const q = this.query().trim().toLowerCase();
-    return RULE_SECTIONS.map((s) => matches(s, q)).filter((s): s is RuleSection => s !== null);
+    return RULE_SECTIONS.map((s) => matchSection(s, q)).filter((s): s is RuleSection => s !== null);
   });
 
+  /**
+   * Jumps (no animation, it's a quick lookup) to a section. Scrolls this element
+   * when it is its own scroller (drawer), otherwise the page (rules page).
+   */
   scrollTo(id: string): void {
     this.query.set('');
     // Wait one frame so a cleared search has re-rendered every section.
-    requestAnimationFrame(() =>
-      this.host.nativeElement.querySelector(`#rule-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
-    );
+    requestAnimationFrame(() => {
+      const host = this.host.nativeElement;
+      const target = host.querySelector<HTMLElement>(`#rule-${id}`);
+      if (!target) return;
+      const searchBar = host.querySelector<HTMLElement>('.search')?.offsetHeight ?? 0;
+      if (host.scrollHeight > host.clientHeight) {
+        const delta = target.getBoundingClientRect().top - host.getBoundingClientRect().top;
+        host.scrollTop += delta - searchBar - 4;
+      } else {
+        window.scrollBy({ top: target.getBoundingClientRect().top - searchBar - 16, behavior: 'instant' });
+      }
+    });
   }
 
   protected onSearch(event: Event): void {

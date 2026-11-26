@@ -57,7 +57,7 @@ import { RulesContent } from './rules-content';
       align-items: start;
     }
     .page {
-      overflow: hidden;
+      overflow: clip; /* not hidden: that would break the sticky search bar */
       &__content {
         padding: 0 16px 16px;
       }
@@ -71,7 +71,7 @@ import { RulesContent } from './rules-content';
       padding-top: 24px;
     }
     .tab {
-      min-height: 52px;
+      min-height: 48px;
       padding: 0 12px 0 10px;
       border: none;
       border-radius: 0 6px 6px 0;

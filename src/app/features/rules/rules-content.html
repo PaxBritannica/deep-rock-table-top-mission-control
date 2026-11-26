@@ -1,7 +1,7 @@
 <label class="search">
   <mat-icon>search</mat-icon>
   <span class="visually-hidden">Search the rules</span>
-  <input type="search" placeholder="Search the rules" [value]="query()" (input)="onSearch($event)" />
+  <input type="search" placeholder="Search: frozen, revive, nitra…" [value]="query()" (input)="onSearch($event)" />
 </label>
 
 @for (section of sections(); track section.id) {
@@ -11,20 +11,14 @@
       {{ section.title }}
     </h3>
 
-    @for (entry of section.entries; track entry.title) {
-      <div class="entry">
-        <h4>{{ entry.title }}</h4>
-        @for (line of entry.lines; track $index) {
-          <p>{{ line }}</p>
+    @for (t of section.tables ?? []; track $index) {
+      <table class="tbl" [class.tbl--text]="t.text">
+        @if (t.caption) {
+          <caption>{{ t.caption }}</caption>
         }
-      </div>
-    }
-
-    @if (section.table; as t) {
-      <table class="stats">
         <thead>
           <tr>
-            @for (c of t.columns; track c) {
+            @for (c of t.columns; track $index) {
               <th scope="col">{{ c }}</th>
             }
           </tr>
@@ -44,7 +38,29 @@
         </tbody>
       </table>
     }
+
+    <div [class.cards]="section.layout === 'cards'">
+      @for (entry of section.entries; track entry.title) {
+        <div class="entry" [class.entry--card]="section.layout === 'cards'">
+          <h4>
+            @if (entry.icon) {
+              <mat-icon>{{ entry.icon }}</mat-icon>
+            }
+            <span>{{ entry.title }}</span>
+            @if (entry.page) {
+              <span class="page" [attr.aria-label]="'Rulebook page ' + entry.page">p.{{ entry.page }}</span>
+            }
+          </h4>
+          @if (entry.summary) {
+            <p class="summary">{{ entry.summary }}</p>
+          }
+          @for (line of entry.lines; track $index) {
+            <p>{{ line }}</p>
+          }
+        </div>
+      }
+    </div>
   </section>
 } @empty {
-  <p class="empty">Nothing matches "{{ query() }}". Try a shorter word, like "revive" or "nitra".</p>
+  <p class="empty">Nothing matches "{{ query() }}". Try a shorter word, like "stun" or "pod".</p>
 }

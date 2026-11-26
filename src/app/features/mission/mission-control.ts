@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject, viewChild } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -23,6 +23,8 @@ export class MissionControl {
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
   private readonly wakeLock = inject(ScreenWakeLockService);
+
+  protected readonly rules = viewChild.required(RulesDrawer);
 
   protected readonly clock = computed(() => formatDuration(this.store.elapsedMs()));
   /** 0..4, drives how loud the swarm panel gets. */

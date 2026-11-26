@@ -14,10 +14,10 @@ Fan-made and unofficial. Not affiliated with Ghost Ship Games or MOOD Publishing
 | --- | --- |
 | **Main menu** | Start a new mission, continue the one in progress, browse the mission log, export/import saves, open the rules. |
 | **New mission** | Name the mission, pick the type and hazard level (1–5), choose who's playing and enter player names (remembered for next time). |
-| **Mission control** | Mission clock (Start / Pause / Resume / Stop), swarm overflow counter, one card per dwarf with +/− counters for Kills, Downed, Revives, Minerals and a live KDA, team totals, and a slide-in rules drawer with thumb-index tabs. Keeps the screen awake while the clock runs. |
+| **Mission control** | Mission clock (Start / Pause / Resume / Stop), swarm overflow counter, one card per dwarf with +/− counters for Kills, Downed, Revives, Minerals and a live KDA, team totals, a **Status effects** button for one-tap lookups, and a slide-in rules drawer with thumb-index tabs. Keeps the screen awake while the clock runs. |
 | **Stop** | Pauses the clock and asks for the outcome: *Mission complete*, *Modest success* or *Mission failed*. Saves the run to the log, or discards it (with undo). |
 | **Debrief** | The saved run: outcome stamp, type, hazard, time, overflows, per-dwarf stat table, team totals and MVP. Delete from the log (with undo). |
-| **Rules** | Searchable quick reference: turn, actions, swarm, creatures (stat table), health & conditions, hazard, extraction, Deep Dive, house rules. |
+| **Rules** | Searchable quick reference built from the rulebook's green reference pages: status effects (with a knocked over vs unconscious comparison), often-missed rules, turn (move and line-of-sight checklists), actions, dice and upgrades, events and swarms, creatures, throwables, extraction, Deep Dive, house rules. Each entry cites its rulebook page. |
 
 **KDA** = (kills + revives) ÷ downed, with downed counted as at least 1. Revives are the "assists".
 **MVP** = highest KDA, ties broken by kills, then minerals.
@@ -121,11 +121,11 @@ The UI is styled like a printed field manual: paper pages on a dark rock backdro
 
 ## Rules reference: updating it from your rulebook PDF
 
-The rules live in `src/app/core/rules/rules.data.ts` as `RULE_SECTIONS`. Each section has a short `tab` label (thumb index), a `title`, a Material Symbols `icon`, `entries` (title + short lines) and an optional `table`. The panel and search pick up whatever is in that file.
+The rules live in `src/app/core/rules/rules.data.ts` as `RULE_SECTIONS`. Each section has a short `tab` label (thumb index), a `title`, a Material Symbols `icon`, optional `tables` (numeric stat tables, or `text: true` for comparison tables), `entries` (title, optional bold `summary`, short `lines`, rulebook `page`), and `layout: 'cards'` to show entries as tiles. The drawer, rules page and search pick up whatever is in that file; `rules.data.spec.ts` checks it stays well formed.
 
-The current text was written from a rules summary of the base game. Check the numbers against your 2nd-edition rulebook. To refresh it with Claude Code, put the PDF in the repo folder (it's git-ignored if you name it `*.pdf`, see below) and ask:
+The content is paraphrased from the 2nd-edition rulebook (deluxe, 2024), mostly its green reference pages (pp. 36–47). To change or extend it with Claude Code, put the PDF in the repo folder (PDFs are git-ignored) and ask, for example:
 
-> Read `rulebook.pdf`. Update `src/app/core/rules/rules.data.ts` so every entry matches the 2nd-edition rules. Write short paraphrases in your own words, at most two sentences per line; don't copy rulebook text. Keep the existing section ids and the House rules section. Then run `npm test` and `npm run build`.
+> Read the rulebook PDF. Add the Mission Book's mission-specific events to `src/app/core/rules/rules.data.ts` as a new section. Write short paraphrases in your own words, at most two sentences per line, with the rulebook page; don't copy rulebook text. Then run `npm test` and `npm run build`.
 
 Keep the reference short and in your own words: the rulebook is copyrighted, and short lines are faster to read at the table anyway.
 

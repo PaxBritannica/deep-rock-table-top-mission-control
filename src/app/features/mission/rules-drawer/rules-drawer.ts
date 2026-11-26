@@ -24,7 +24,8 @@ export class RulesDrawer {
   protected readonly active = signal<string | null>(null);
   private readonly content = viewChild.required(RulesContent);
 
-  protected openAt(id: string): void {
+  /** Opens the drawer at a section; tapping the open section's tab again closes it. */
+  openAt(id: string): void {
     if (this.open() && this.active() === id) {
       this.open.set(false);
       return;

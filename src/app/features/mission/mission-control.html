@@ -5,6 +5,10 @@
       <h1>{{ m.name }}</h1>
       <span>{{ m.type }}, hazard {{ m.hazard }}</span>
     </div>
+    <button matButton="filled" class="bar__status fm-btn-amber" (click)="rules().openAt('status')">
+      <mat-icon>personal_injury</mat-icon>
+      Status effects
+    </button>
   </header>
 
   <main class="grid">
